@@ -1,0 +1,42 @@
+@page "/"
+
+<PageTitle>Events | EventEase</PageTitle>
+
+<div class="events-page">
+    <main>
+        <section class="hero" aria-labelledby="page-title">
+            <p class="eyebrow">GOOD THINGS ARE HAPPENING</p>
+            <h1 id="page-title">Find your kind of <span>event.</span></h1>
+            <p class="hero-copy">Gather with your people, discover something new, and make a day of it.</p>
+        </section>
+
+        <section class="events-section" aria-labelledby="events-heading">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">ON THE CALENDAR</p>
+                    <h2 id="events-heading">Events to look forward to</h2>
+                </div>
+                <span class="event-count">@Events.Count events</span>
+            </div>
+
+            <div class="event-grid">
+                @foreach (var eventItem in Events)
+                {
+                    <EventCard EventName="@eventItem.EventName"
+                               EventDate="@eventItem.EventDate"
+                               Location="@eventItem.Location"
+                               EventId="@eventItem.Id" />
+                }
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <span>Made for moments that matter.</span>
+        <span>© @DateTime.Now.Year EventEase</span>
+    </footer>
+</div>
+
+@code {
+    private IReadOnlyList<EventInfo> Events => EventCatalog.Events;
+}

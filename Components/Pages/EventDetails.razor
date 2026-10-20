@@ -1,0 +1,46 @@
+@page "/events/{EventId:int}"
+@inject AttendanceTracker AttendanceTracker
+
+<PageTitle>@(Event?.EventName ?? "Event not found") | EventEase</PageTitle>
+
+<section class="content-page">
+    @if (Event is { } eventItem)
+    {
+        <NavLink class="back-link" href="/">← All events</NavLink>
+        <p class="eyebrow">EVENT DETAILS</p>
+        <h1>@eventItem.EventName</h1>
+        <p class="page-intro">@eventItem.Description</p>
+
+        <dl class="event-facts">
+            <div>
+                <dt>Date and time</dt>
+                <dd>@eventItem.EventDate.ToString("dddd, MMMM d, yyyy")</dd>
+                <dd>@eventItem.EventDate.ToString("h:mm tt")</dd>
+            </div>
+            <div>
+                <dt>Location</dt>
+                <dd>@eventItem.Location</dd>
+            </div>
+            <div>
+                <dt>Registrations</dt>
+                <dd>@AttendanceTracker.GetRegistrationCount(eventItem.Id) people registered</dd>
+            </div>
+        </dl>
+
+        <NavLink class="primary-link" href="@($"/register/{eventItem.Id}")">Register for this event <span aria-hidden="true">→</span></NavLink>
+    }
+    else
+    {
+        <p class="eyebrow">EVENT NOT FOUND</p>
+        <h1>We couldn't find that event.</h1>
+        <p class="page-intro">It may have been removed or the link may be out of date.</p>
+        <NavLink class="primary-link" href="/">Browse all events</NavLink>
+    }
+</section>
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private EventInfo? Event => EventCatalog.Find(EventId);
+}

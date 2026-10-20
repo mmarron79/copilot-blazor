@@ -1,0 +1,99 @@
+@page "/register/{EventId:int}"
+@using System.ComponentModel.DataAnnotations
+@inject UserSessionTracker UserSession
+@inject AttendanceTracker AttendanceTracker
+
+<PageTitle>Register | EventEase</PageTitle>
+
+<section class="content-page">
+    @if (Event is { } eventItem)
+    {
+        <NavLink class="back-link" href="@($"/events/{eventItem.Id}")">← Event details</NavLink>
+        <p class="eyebrow">SAVE YOUR SPOT</p>
+        <h1>Register for @eventItem.EventName</h1>
+        <p class="page-intro">@eventItem.EventDate.ToString("MMMM d, yyyy") · @eventItem.Location</p>
+
+        @if (registrationComplete)
+        {
+            <div class="confirmation" role="status">
+                <h2>@(alreadyRegistered ? "You're already on the list." : $"Thanks, {Form.Name}!")</h2>
+                <p>
+                    @(alreadyRegistered
+                        ? $"Your session already has a registration for {eventItem.EventName}."
+                        : $"Your registration is confirmed for {eventItem.EventName}.")
+                    Your registration is tracked for this app session.
+                </p>
+                <NavLink class="text-link" href="/my-activity">View your activity</NavLink>
+                <NavLink class="text-link" href="/">Explore more events</NavLink>
+            </div>
+        }
+        else
+        {
+            <EditForm class="registration-form" FormName="EventRegistration" Model="@Form" OnValidSubmit="SubmitRegistration">
+                <DataAnnotationsValidator />
+                <label for="registration-name">Your name</label>
+                <InputTextOnInput id="registration-name" @bind-Value="Form.Name" autocomplete="name" />
+                <ValidationMessage For="@(() => Form.Name)" />
+
+                <label for="registration-email">Email address</label>
+                <InputTextOnInput id="registration-email" type="email" @bind-Value="Form.Email" autocomplete="email" />
+                <ValidationMessage For="@(() => Form.Email)" />
+
+                <aside class="registration-preview" aria-live="polite">
+                    <p class="preview-label">REGISTRATION PREVIEW</p>
+                    <p class="preview-name">@(string.IsNullOrWhiteSpace(Form.Name) ? "Your name" : Form.Name)</p>
+                    <p class="preview-email">@(string.IsNullOrWhiteSpace(Form.Email) ? "Your email address" : Form.Email)</p>
+                    <p class="preview-event">@eventItem.EventName</p>
+                </aside>
+
+                <button class="primary-link" type="submit">Complete registration <span aria-hidden="true">→</span></button>
+            </EditForm>
+        }
+    }
+    else
+    {
+        <p class="eyebrow">EVENT NOT FOUND</p>
+        <h1>We couldn't find that event.</h1>
+        <p class="page-intro">Choose an event from the list to register.</p>
+        <NavLink class="primary-link" href="/">Browse all events</NavLink>
+    }
+</section>
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private EventInfo? Event => EventCatalog.Find(EventId);
+    [SupplyParameterFromForm(FormName = "EventRegistration", Name = "Form")]
+    private RegistrationForm? RegistrationModel { get; set; }
+    private RegistrationForm Form => RegistrationModel ??= new()
+    {
+        Name = UserSession.Name,
+        Email = UserSession.Email
+    };
+    private bool registrationComplete;
+    private bool alreadyRegistered;
+
+    private void SubmitRegistration()
+    {
+        UserSession.UpdateProfile(Form.Name, Form.Email);
+        alreadyRegistered = !UserSession.TryRecordRegistration(EventId);
+        if (!alreadyRegistered)
+        {
+            AttendanceTracker.RecordRegistration(EventId);
+        }
+
+        registrationComplete = true;
+    }
+
+    private sealed class RegistrationForm
+    {
+        [Required(ErrorMessage = "Please enter your name.")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 100 characters.")]
+        public string Name { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Please enter your email address.")]
+        [EmailAddress(ErrorMessage = "Enter a valid email address.")]
+        public string Email { get; set; } = string.Empty;
+    }
+}

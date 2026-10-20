@@ -1,0 +1,55 @@
+@page "/my-activity"
+@inject UserSessionTracker UserSession
+@inject AttendanceTracker AttendanceTracker
+
+<PageTitle>My activity | EventEase</PageTitle>
+
+<section class="content-page">
+    @{
+        var registeredEvents = EventCatalog.Events
+            .Where(eventItem => UserSession.HasRegistered(eventItem.Id))
+            .ToArray();
+    }
+
+    <p class="eyebrow">YOUR EVENT SESSION</p>
+    <h1>My activity</h1>
+
+    @if (string.IsNullOrWhiteSpace(UserSession.Name))
+    {
+        <p class="page-intro">Your profile and registrations will appear here after you register for an event.</p>
+        <NavLink class="primary-link activity-browse-link" href="/">Browse events</NavLink>
+    }
+    else
+    {
+        <p class="page-intro">Your profile is available for this active app session.</p>
+        <section class="activity-profile" aria-label="Your profile">
+            <h2>@UserSession.Name</h2>
+            <p>@UserSession.Email</p>
+        </section>
+
+        <h2 class="activity-heading">Your registrations</h2>
+        @if (registeredEvents.Length == 0)
+        {
+            <p class="page-intro">You haven't registered for an event yet.</p>
+        }
+        else
+        {
+            <ul class="activity-list">
+                @foreach (var eventItem in registeredEvents)
+                {
+                    <li>
+                        <div>
+                            <h3>@eventItem.EventName</h3>
+                            <p>@eventItem.EventDate.ToString("MMMM d, yyyy") · @eventItem.Location</p>
+                        </div>
+                        <span class="activity-count">
+                            @AttendanceTracker.GetRegistrationCount(eventItem.Id) registered
+                        </span>
+                    </li>
+                }
+            </ul>
+        }
+    }
+
+    <p class="activity-note">Registration totals are shared across active visitors and reset when the app restarts. Personal session details are not saved permanently.</p>
+</section>

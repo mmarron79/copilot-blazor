@@ -1,0 +1,148 @@
+.event-card-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.event-card-link:focus-visible {
+    border-radius: 18px;
+    outline: 3px solid #91aa86;
+    outline-offset: 4px;
+}
+
+.event-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    min-height: 150px;
+    padding: 1.25rem 3.5rem 1.25rem 1.25rem;
+    border: 1px solid #ecebe5;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgb(38 45 33 / 4%);
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.event-card:hover {
+    transform: translateY(-3px);
+    border-color: #c6d6bf;
+    box-shadow: 0 14px 32px rgb(38 45 33 / 8%);
+}
+
+.date-tile {
+    display: flex;
+    flex: 0 0 70px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 86px;
+    border-radius: 12px;
+    background: #f1f5ee;
+    color: #385338;
+}
+
+.date-month,
+.date-weekday {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.date-day {
+    margin: 0.05rem 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.8rem;
+    line-height: 1.05;
+}
+
+.date-weekday {
+    color: #778775;
+    font-size: 0.62rem;
+}
+
+.card-content {
+    min-width: 0;
+}
+
+.event-date {
+    margin: 0 0 0.4rem;
+    color: #738071;
+    font-size: 0.76rem;
+    font-weight: 600;
+}
+
+.event-date span {
+    padding: 0 0.15rem;
+    color: #b6beb2;
+}
+
+.card-content h3 {
+    margin: 0;
+    color: #263328;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.25;
+}
+
+.event-location {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.65rem 0 0;
+    color: #737b70;
+    font-size: 0.82rem;
+}
+
+.event-location svg {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+    color: #7b9273;
+}
+
+.card-arrow {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.2rem;
+    color: #9ca79a;
+    font-size: 1rem;
+    transition: color 180ms ease, transform 180ms ease;
+}
+
+.event-card:hover .card-arrow {
+    transform: translate(2px, -2px);
+    color: #496748;
+}
+
+@media (max-width: 480px) {
+    .event-card {
+        gap: 0.9rem;
+        min-height: 136px;
+        padding: 1rem 2.5rem 1rem 1rem;
+    }
+
+    .date-tile {
+        flex-basis: 62px;
+        width: 62px;
+        height: 78px;
+    }
+
+    .card-content h3 {
+        font-size: 1.1rem;
+    }
+
+    .event-date,
+    .event-location {
+        font-size: 0.72rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .event-card,
+    .card-arrow {
+        transition: none;
+    }
+}

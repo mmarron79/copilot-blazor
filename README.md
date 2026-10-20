@@ -4,4 +4,4 @@ To test this project:
 2) Save the contents in a folder
 3) Open the .csproj file in Visual Studio Code
 4) Open a terminal window
-5) Type [code]dotnet run[/code] to run the project and view it in the Visual Studio Code browser
+5) Type `dotnet run` to run the project and view it in the Visual Studio Code browser
